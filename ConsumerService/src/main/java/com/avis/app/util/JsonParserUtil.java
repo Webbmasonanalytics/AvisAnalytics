@@ -32,10 +32,24 @@ public class JsonParserUtil {
 		List<DataObject> dos=new ArrayList<>();
 		while(itr.hasNext()) 
 		{
-			DataObject obj = getDataObject(itr.next().asText(), className);
+			DataObject obj = getDataObject(itr.next(), className);
 			dos.add(obj);
 		}
 		return dos;
+	}
+	
+	/**
+	 * 
+	 * @param cdcMessage
+	 * @param className should extend @DataObject
+	 * @return DataObect
+	 * @throws JsonMappingException
+	 * @throws JsonProcessingException
+	 */
+	public DataObject getDataObject(JsonNode cdcMessage, Class<? extends DataObject> className) throws JsonMappingException, JsonProcessingException 
+	{
+		DataObject DO = (DataObject)mapper.treeToValue(cdcMessage, className);
+		return DO;
 	}
 	
 	/**
