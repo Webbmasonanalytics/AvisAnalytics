@@ -17,6 +17,7 @@ import com.avis.app.redshift.model.RawTelemtryToyota;
 import com.avis.app.util.AwsS3Util;
 import com.avis.app.util.FileUtils;
 import com.avis.app.util.JsonParserUtil;
+import com.avis.app.util.RedshiftUtil;
 
 @Component
 public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
@@ -33,6 +34,9 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 
 	@Autowired
 	AwsS3Util awsS3Util;
+	
+	@Autowired
+	RedshiftUtil redshiftUtil;
 
 	@Value("${telemetry.toyota.raw.aws.bucketName}")
 	private String bucketName;
@@ -51,10 +55,10 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 
 	@Value("${telemetry.toyota.raw.aws.fileName.format}")
 	private String format;
-
-	@Value("${telemetry.s3.data.count.per.file}")
-	private int recordsPerFile;
-
+	
+	@Value("${telemetry.toyota.raw.redshift.tableName}")
+	private String tableName;
+	
 	@Override
 	public boolean insertRecord(ConsumerRecord<String, String> record) throws Exception {
 
@@ -79,12 +83,18 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 				redshiftData.setTimestamp(timestamp);
 				String message = jsonParserUtil.getJsonString(redshiftData);
 				content.add(message);
-				// TODO handle failure scenario
-				fileUtils.writeDataToFile(content, generatedFileName, false);
-				awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, generatedFileName);
-
 			}
+			
+			//TODO handle failure and parallesim
+			fileUtils.writeDataToFile(content, generatedFileName, false);
+			String s3Path = awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, generatedFileName);
+			int count = redshiftUtil.executeCopyCommand(tableName, s3Path);
+			logger.debug("effected rows in redshift {}",count);
+			awsS3Util.moveObject(bucketName, inboxDir + "/" + generatedFileName, archiveDir+ "/" + generatedFileName);
 		}
+		
+		
+		
 		long endTime = System.currentTimeMillis();
 		logger.debug("Total Time take for partition {}, offset {} is {} milliseconds", partition, offset,
 				(endTime - startTime));

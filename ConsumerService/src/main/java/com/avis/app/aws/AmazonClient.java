@@ -29,7 +29,14 @@ public class AmazonClient {
 
 	}
 	
-	public void uploadFile(String bucketName, String awsS3Key, String uploadFileWithLocation) {
+	public String uploadFile(String bucketName, String awsS3Key, String uploadFileWithLocation) {
 		this.s3client.putObject(bucketName, awsS3Key, new File(uploadFileWithLocation));
+		return ((AmazonS3Client)this.s3client).getResourceUrl(bucketName, awsS3Key);
+		
+	}
+
+	public void moveFile(String sourceBucket,String awsS3SourceLoc, String awsS3DestLoc) {
+		this.s3client.copyObject(sourceBucket, awsS3SourceLoc, sourceBucket, awsS3DestLoc);
+		this.s3client.deleteObject(sourceBucket, awsS3SourceLoc);
 	}
 }
