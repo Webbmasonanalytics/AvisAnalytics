@@ -106,7 +106,7 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 		
 		
 		long endTime = System.currentTimeMillis();
-		logger.debug("Total Time take for partition {}, offset {} is {} milliseconds", partition, offset,
+		logger.info("Total Time take for partition {}, offset {} is {} milliseconds", partition, offset,
 				(endTime - startTime));
 		return true;
 	}
