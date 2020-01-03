@@ -62,7 +62,7 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 	public boolean insertRecord(ConsumerRecord<String, String> record) throws Exception {
 
 		long startTime = System.currentTimeMillis();
-		System.out.println(jsonParserUtil==null);
+		System.out.println("Checking"+(jsonParserUtil==null));
 		List<DataObject> dos = jsonParserUtil.getListDataObject(record.value(), TelemetryRawMessage.class);
 		final int partition = record.partition();
 		final long offset = record.offset();
