@@ -12,6 +12,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Service
 public class AmazonClient {
@@ -24,7 +25,7 @@ public class AmazonClient {
 	@PostConstruct
 	private void initializeAmazon() 
 	{
-		this.s3client = new AmazonS3Client(new InstanceProfileCredentialsProvider());
+		this.s3client = AmazonS3ClientBuilder.standard().withCredentials(InstanceProfileCredentialsProvider.getInstance()).build();
 		this.s3client.setRegion(Region.getRegion(Regions.fromName(regionName)));
 
 	}
