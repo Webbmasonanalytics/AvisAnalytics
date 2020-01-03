@@ -84,7 +84,7 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 				redshiftData.setTimestamp(timestamp);
 				redshiftData.setTopicName(record.topic());
 				String message = jsonParserUtil.getJsonString(redshiftData);
-				content.add(message+"\r\n");
+				content.add(message);
 			}
 			
 			//TODO handle failure and parallesim
@@ -94,6 +94,7 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 			String s3Path = awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, localDir+"/"+generatedFileName);
 			int count = 0;//redshiftUtil.executeCopyCommand(tableName, s3Path);
 			logger.debug("effected rows in redshift {}",count);
+			logger.info("Move Path :"+s3Path);
 			awsS3Util.moveObject(bucketName, s3Path, "s3://"+bucketName+"/"+archiveDir+ "/" + generatedFileName);
 		}
 		
