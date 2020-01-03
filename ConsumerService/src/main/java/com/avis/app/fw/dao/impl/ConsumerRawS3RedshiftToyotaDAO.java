@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.avis.app.fw.kafka.model.DataObject;
@@ -21,9 +20,6 @@ import com.avis.app.util.JsonParserUtil;
 @Component
 public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 	private Logger logger = LoggerFactory.getLogger(ConsumerRawS3RedshiftToyotaDAO.class);
-
-	@Autowired
-	ResourceLoader resourceLoader;
 
 	@Autowired
 	JsonParserUtil jsonParserUtil;
