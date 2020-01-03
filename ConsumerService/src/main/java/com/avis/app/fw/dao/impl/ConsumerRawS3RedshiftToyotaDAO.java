@@ -33,6 +33,12 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 //	@Autowired
 //	RedshiftUtil redshiftUtil;
 
+	
+	
+	@Value("${telemetry.toyota.raw.localfile.directory}")
+	private String localDir;
+
+	
 	@Value("${telemetry.toyota.raw.aws.bucketName}")
 	private String bucketName;
 
@@ -58,7 +64,6 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 	public boolean insertRecord(ConsumerRecord<String, String> record) throws Exception {
 
 		long startTime = System.currentTimeMillis();
-		System.out.println("Checking"+(jsonParserUtil==null));
 		List<DataObject> dos = jsonParserUtil.getListDataObject(record.value(), TelemetryRawMessage.class);
 		final int partition = record.partition();
 		final long offset = record.offset();
@@ -67,7 +72,7 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 		logger.debug("Writing data for partition {}, offset {}", partition, offset);
 
 		String generatedFileName = fileName + "_" + partition + "_" + offset + "." + format;
-		logger.debug("Writing to local file {}", generatedFileName);
+		logger.debug("Writing to local file {}/{}", localDir,generatedFileName);
 
 		if (dos != null && dos.size() != 0) {
 			List<String> content = new ArrayList<String>();
@@ -78,12 +83,14 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 				redshiftData.setOffset(offset);
 				redshiftData.setTimestamp(timestamp);
 				String message = jsonParserUtil.getJsonString(redshiftData);
+				logger.debug("s3 Write Data {}",message);
 				content.add(message);
 			}
 			
 			//TODO handle failure and parallesim
-			fileUtils.writeDataToFile(content, generatedFileName, false);
-			String s3Path = awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, generatedFileName);
+			
+			fileUtils.writeDataToFile(content, localDir+"/"+generatedFileName, false);
+			String s3Path = awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, localDir+"/"+generatedFileName);
 			int count = 0;//redshiftUtil.executeCopyCommand(tableName, s3Path);
 			logger.debug("effected rows in redshift {}",count);
 			awsS3Util.moveObject(bucketName, s3Path, "s3://"+bucketName+"/"+archiveDir+ "/" + generatedFileName);
