@@ -1,7 +1,6 @@
 package com.avis.app.redshift.model;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * 
@@ -11,6 +10,10 @@ import java.sql.Timestamp;
 public class RawTelemtryToyota implements Serializable {
 	
 	private static final long serialVersionUID = 90067605705809281L;
+	private int partition;
+	private long offset;
+	private long timestamp;
+	private String topicName;
 	private double location_coordinates_1;
 	private String vehicleName;
 	private double telemetry_driverWindow_value;
@@ -37,7 +40,6 @@ public class RawTelemtryToyota implements Serializable {
 	private double telemetry_rlWindow_value;
 	private double telemetry_flTirePressure_value;
 	private double telemetry_sunRoof_value;
-	private Timestamp loadDate;
 	public double getLocation_coordinates_1() {
 		return location_coordinates_1;
 	}
@@ -194,10 +196,32 @@ public class RawTelemtryToyota implements Serializable {
 	public void setTelemetry_sunRoof_value(double telemetry_sunRoof_value) {
 		this.telemetry_sunRoof_value = telemetry_sunRoof_value;
 	}
-	public Timestamp getLoadDate() {
-		return loadDate;
+	
+	public int getPartition() {
+		return partition;
 	}
-	public void setLoadDate(Timestamp loadDate) {
-		this.loadDate = loadDate;
-	}	
+	public void setPartition(int partition) {
+		this.partition = partition;
+	}
+	public long getOffset() {
+		return offset;
+	}
+	public void setOffset(long offset) {
+		this.offset = offset;
+	}
+	public long getTimestamp() {
+		return timestamp;
+	}
+	
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	public String getTopicName() {
+		return topicName;
+	}
+	public void setTopicName(String topicName) {
+		this.topicName = topicName;
+	}
+	
 }

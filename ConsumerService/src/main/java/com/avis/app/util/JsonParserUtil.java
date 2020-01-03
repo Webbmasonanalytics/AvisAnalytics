@@ -52,4 +52,8 @@ public class JsonParserUtil {
 		return DO;
 	}
 
+	
+	public String getJsonString(Object inputObject) throws JsonProcessingException {
+		return mapper.writeValueAsString(inputObject);
+	}
 }
