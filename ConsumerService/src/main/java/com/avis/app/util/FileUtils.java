@@ -20,9 +20,9 @@ public class FileUtils {
 			f.getParentFile().mkdirs();
 		}
 
-//		if (!f.exists()) {
-//			f.createNewFile();
-//		}
+		if (!f.exists()) {
+			f.createNewFile();
+		}
 
 		if (append) {
 			Files.write(Paths.get(fileNameWithLocation), content, StandardOpenOption.APPEND);
