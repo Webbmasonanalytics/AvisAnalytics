@@ -11,6 +11,7 @@ import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectResult;
 
 @Service
 public class AmazonClient {
@@ -28,9 +29,9 @@ public class AmazonClient {
 
 	}
 	
-	public String uploadFile(String bucketName, String awsS3Key, String uploadFileWithLocation) {
+	public void uploadFile(String bucketName, String awsS3Key, String uploadFileWithLocation) {
 		this.s3client.putObject(bucketName, awsS3Key, new File(uploadFileWithLocation));
-		return ((AmazonS3Client)this.s3client).getResourceUrl(bucketName, awsS3Key);
+		
 		
 	}
 

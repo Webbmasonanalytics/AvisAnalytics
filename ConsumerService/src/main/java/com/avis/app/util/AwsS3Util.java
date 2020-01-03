@@ -11,9 +11,9 @@ public class AwsS3Util {
 	@Autowired
 	AmazonClient awsClient;
 	
-	public String uploadObject(String bucketName, String awsS3Key, String uploadFileWithLocation) 
+	public void uploadObject(String bucketName, String awsS3Key, String uploadFileWithLocation) 
 	{
-		return awsClient.uploadFile(bucketName, awsS3Key, uploadFileWithLocation);
+		awsClient.uploadFile(bucketName, awsS3Key, uploadFileWithLocation);
 	}
 	
 	public void moveObject(String bucketName, String awsS3SourceLoc, String awsS3DestLoc) 

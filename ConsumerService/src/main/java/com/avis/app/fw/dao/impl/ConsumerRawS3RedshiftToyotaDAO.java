@@ -72,7 +72,8 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 		logger.debug("Writing data for partition {}, offset {}", partition, offset);
 
 		String generatedFileName = fileName + "_" + partition + "_" + offset + "." + format;
-		logger.debug("Writing to local file {}/{}", localDir,generatedFileName);
+		String localFile = localDir+"/"+generatedFileName;
+		logger.debug("Writing to local file {}",localFile);
 
 		if (dos != null && dos.size() != 0) {
 			List<String> content = new ArrayList<String>();
@@ -90,12 +91,16 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 			//TODO handle failure and parallesim
 			logger.debug("s3 Write Data {}",content);
 			
-			fileUtils.writeDataToFile(content, localDir+"/"+generatedFileName, false);
-			String s3Path = awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, localDir+"/"+generatedFileName);
+			fileUtils.writeDataToFile(content, localFile, false);
+			final String s3PutObjectKey =inboxDir + "/" + generatedFileName;
+			awsS3Util.uploadObject(bucketName, s3PutObjectKey, localFile);
+			
+			final String s3Path = "s3://"+bucketName+"/"+s3PutObjectKey;
+			final String s3MovePath = "s3://"+bucketName+"/"+archiveDir+ "/" + generatedFileName;
 			int count = 0;//redshiftUtil.executeCopyCommand(tableName, s3Path);
 			logger.debug("effected rows in redshift {}",count);
 			logger.info("Move Path :"+s3Path);
-			awsS3Util.moveObject(bucketName, s3Path, "s3://"+bucketName+"/"+archiveDir+ "/" + generatedFileName);
+			awsS3Util.moveObject(bucketName, s3Path, s3MovePath);
 		}
 		
 		
