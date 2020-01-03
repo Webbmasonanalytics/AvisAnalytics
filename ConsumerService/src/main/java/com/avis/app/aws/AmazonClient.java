@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -25,8 +23,8 @@ public class AmazonClient {
 	@PostConstruct
 	private void initializeAmazon() 
 	{
-		this.s3client = AmazonS3ClientBuilder.standard().withCredentials(InstanceProfileCredentialsProvider.getInstance()).build();
-		this.s3client.setRegion(Region.getRegion(Regions.fromName(regionName)));
+		this.s3client = AmazonS3ClientBuilder.standard().withRegion(regionName).withCredentials(InstanceProfileCredentialsProvider.getInstance()).build();
+//		this.s3client.setRegion(Region.getRegion(Regions.fromName(regionName)));
 
 	}
 	
