@@ -35,8 +35,8 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 	@Autowired
 	AwsS3Util awsS3Util;
 	
-	@Autowired
-	RedshiftUtil redshiftUtil;
+//	@Autowired
+//	RedshiftUtil redshiftUtil;
 
 	@Value("${telemetry.toyota.raw.aws.bucketName}")
 	private String bucketName;
@@ -88,9 +88,9 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 			//TODO handle failure and parallesim
 			fileUtils.writeDataToFile(content, generatedFileName, false);
 			String s3Path = awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, generatedFileName);
-			int count = redshiftUtil.executeCopyCommand(tableName, s3Path);
+			int count = 0;//redshiftUtil.executeCopyCommand(tableName, s3Path);
 			logger.debug("effected rows in redshift {}",count);
-			awsS3Util.moveObject(bucketName, inboxDir + "/" + generatedFileName, archiveDir+ "/" + generatedFileName);
+			awsS3Util.moveObject(bucketName, s3Path, "s3://"+bucketName+"/"+archiveDir+ "/" + generatedFileName);
 		}
 		
 		
