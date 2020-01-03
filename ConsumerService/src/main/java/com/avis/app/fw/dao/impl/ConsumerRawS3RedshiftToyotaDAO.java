@@ -82,12 +82,13 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 				redshiftData.setPartition(partition);
 				redshiftData.setOffset(offset);
 				redshiftData.setTimestamp(timestamp);
+				redshiftData.setTopicName(record.topic());
 				String message = jsonParserUtil.getJsonString(redshiftData);
-				logger.debug("s3 Write Data {}",message);
-				content.add(message);
+				content.add(message+"\r\n");
 			}
 			
 			//TODO handle failure and parallesim
+			logger.debug("s3 Write Data {}",content);
 			
 			fileUtils.writeDataToFile(content, localDir+"/"+generatedFileName, false);
 			String s3Path = awsS3Util.uploadObject(bucketName, inboxDir + "/" + generatedFileName, localDir+"/"+generatedFileName);
