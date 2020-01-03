@@ -95,12 +95,11 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 			final String s3PutObjectKey =inboxDir + "/" + generatedFileName;
 			awsS3Util.uploadObject(bucketName, s3PutObjectKey, localFile);
 			
-			final String s3Path = "s3://"+bucketName+"/"+s3PutObjectKey;
-			final String s3MovePath = "s3://"+bucketName+"/"+archiveDir+ "/" + generatedFileName;
+			final String s3MovePath = archiveDir+ "/" + generatedFileName;
 			int count = 0;//redshiftUtil.executeCopyCommand(tableName, s3Path);
 			logger.debug("effected rows in redshift {}",count);
-			logger.info("Move Path :"+s3Path);
-			awsS3Util.moveObject(bucketName, s3Path, s3MovePath);
+			logger.info("Move Path :"+s3PutObjectKey);
+			awsS3Util.moveObject(bucketName, s3PutObjectKey, s3MovePath);
 		}
 		
 		
