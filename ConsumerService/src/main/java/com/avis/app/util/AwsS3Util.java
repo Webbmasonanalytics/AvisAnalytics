@@ -18,7 +18,7 @@ public class AwsS3Util {
 	
 	public void moveObject(String bucketName, String awsS3SourceLoc, String awsS3DestLoc) 
 	{
-		awsClient.moveFile(bucketName,awsS3SourceLoc, awsS3SourceLoc);
+		awsClient.moveFile(bucketName,awsS3SourceLoc, awsS3DestLoc);
 	}
 
 }

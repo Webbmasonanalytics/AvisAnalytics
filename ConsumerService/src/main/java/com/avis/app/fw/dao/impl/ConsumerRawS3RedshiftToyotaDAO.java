@@ -99,6 +99,7 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 			int count = 0;//redshiftUtil.executeCopyCommand(tableName, s3Path);
 			logger.debug("effected rows in redshift {}",count);
 			logger.info("Move Path :"+s3PutObjectKey);
+			logger.info("Archive Path :"+s3MovePath);
 			awsS3Util.moveObject(bucketName, s3PutObjectKey, s3MovePath);
 		}
 		
