@@ -26,29 +26,14 @@ public class ConsumerNavigator implements ProcessConsumer {
 	@Value("${telemetry.nmz.topicName}")
 	private String telemetryNMZTopicName;
 	
+	@Value("${telemetry.test.NMZ.nulls}")
+	private boolean testTelemetryNMZNulls;
+	
 	@Autowired
 	ConsumerRawS3RedshiftToyotaDAO rawS3RedshiftToyotaDAO;
 	
 	@Autowired
 	ConsumerNMZS3RedhiftDAO nmzS3RedhiftDAO;
-
-	// @Override
-	// public boolean process(ConsumerRecord<String, String> record) throws
-	// Exception {
-	// final String topicName = record.topic();
-	//
-	// try {
-	// // get operation and perform steps
-	// List<ConsumerDAO> daos = getDaos(topicName);
-	// for (ConsumerDAO consumerDAO : daos) {
-	// consumerDAO.insertRecord(record); // How to achieve parallelism
-	// }
-	//
-	// } finally {
-	//
-	// }
-	// return true;
-	// }
 
 	public List<ConsumerDAO> getDaos(String topicName) throws Exception {
 		String className = env.getProperty(topicName + ".classname");
@@ -73,7 +58,12 @@ public class ConsumerNavigator implements ProcessConsumer {
 		if(StringUtils.equalsIgnoreCase(topicName, telemetryRawToyotaTopicName)) {
 			rawS3RedshiftToyotaDAO.insertRecord(record);
 		}else if(StringUtils.equalsIgnoreCase(topicName, telemetryNMZTopicName)) {
+			if(!testTelemetryNMZNulls) 
+			{
 			nmzS3RedhiftDAO.insertRecord(record);
+			}else {
+				
+			}
 		}
 		return false;
 	}

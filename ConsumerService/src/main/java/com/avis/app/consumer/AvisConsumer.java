@@ -21,7 +21,7 @@ public class AvisConsumer {
 	public void eventsListener(ConsumerRecord<String, String> record) 
 	{
 		final String topicName = record.topic();
-		logger.info("processing the topicName='{}'", topicName);
+		logger.info("processing the topicName='{}',partition='{}', offset='{}'", topicName,record.partition(),record.offset());
 		try {
 			coordinator.process(record);
 		} catch (Exception e) {
