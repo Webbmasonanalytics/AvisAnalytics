@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.avis.app.fw.dao.ConsumerDAO;
 import com.avis.app.fw.dao.impl.ConsumerNMZS3RedhiftDAO;
 import com.avis.app.fw.dao.impl.ConsumerRawS3RedshiftToyotaDAO;
+import com.avis.app.fw.dao.impl.TestConsumerNMZDataToyotaNullDAO;
 import com.avis.app.fw.manage.ProcessConsumer;
 
 @Component
@@ -22,18 +23,21 @@ public class ConsumerNavigator implements ProcessConsumer {
 	Environment env;
 	@Value("${telemetry.toyota.raw.topicName}")
 	private String telemetryRawToyotaTopicName;
-	
+
 	@Value("${telemetry.nmz.topicName}")
 	private String telemetryNMZTopicName;
-	
-	@Value("${telemetry.test.NMZ.nulls}")
+
+	@Value("${telemetry.test.NMZ.toyota.nulls}")
 	private boolean testTelemetryNMZNulls;
-	
+
 	@Autowired
 	ConsumerRawS3RedshiftToyotaDAO rawS3RedshiftToyotaDAO;
-	
+
 	@Autowired
 	ConsumerNMZS3RedhiftDAO nmzS3RedhiftDAO;
+
+	@Autowired
+	TestConsumerNMZDataToyotaNullDAO testConsumerNMZDataToyotaNullDAO;
 
 	public List<ConsumerDAO> getDaos(String topicName) throws Exception {
 		String className = env.getProperty(topicName + ".classname");
@@ -52,17 +56,17 @@ public class ConsumerNavigator implements ProcessConsumer {
 	}
 
 	@Override
-	public boolean process(ConsumerRecord<String, String> record) throws Exception {
+	public boolean process(ConsumerRecord<String, String> record) throws Exception 
+	{
 
 		final String topicName = record.topic();
-		if(StringUtils.equalsIgnoreCase(topicName, telemetryRawToyotaTopicName)) {
+		if (StringUtils.equalsIgnoreCase(topicName, telemetryRawToyotaTopicName)) {
 			rawS3RedshiftToyotaDAO.insertRecord(record);
-		}else if(StringUtils.equalsIgnoreCase(topicName, telemetryNMZTopicName)) {
-			if(!testTelemetryNMZNulls) 
-			{
-			nmzS3RedhiftDAO.insertRecord(record);
-			}else {
-				
+		} else if (StringUtils.equalsIgnoreCase(topicName, telemetryNMZTopicName)) {
+			if (!testTelemetryNMZNulls) {
+				nmzS3RedhiftDAO.insertRecord(record);
+			} else {
+				testConsumerNMZDataToyotaNullDAO.insertRecord(record);
 			}
 		}
 		return false;

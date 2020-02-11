@@ -32,5 +32,27 @@ public class FileUtils {
 		}
 
 	}
+	
+	
+	public void writeDataToFile(final String content, final String fileNameWithLocation, boolean append)
+			throws IOException {
+
+		File f = new File(fileNameWithLocation);
+		if (!f.getParentFile().exists()) {
+			f.getParentFile().mkdirs();
+		}
+
+		if (!f.exists()) {
+			f.createNewFile();
+		}
+
+		if (append) {
+			Files.write(Paths.get(fileNameWithLocation), content.getBytes(), StandardOpenOption.APPEND);
+		} else {
+			Files.write(Paths.get(fileNameWithLocation), content.getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+
+		}
+
+	}
 
 }
