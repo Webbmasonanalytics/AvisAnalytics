@@ -50,9 +50,10 @@ public class TestConsumerNMZDataToyotaNullDAO extends DAO
 		logger.info("In TestConsumerNMZDataToyotaNullDAO");
 		long currentTimeInMillis = System.currentTimeMillis();
 		NormalizedMsg dao = (NormalizedMsg)jsonParserUtil.getDataObject(record.value(), NormalizedMsg.class);
+		int partition=record.partition();
+		long offset=record.offset();
+		logger.debug("Source = {},partition={},offset={}",dao.getSource(),partition,offset);
 		if(StringUtils.equalsIgnoreCase(dao.getSource(),toyotaSource)) {
-			int partition=record.partition();
-			long offset=record.offset();
 			logger.debug("Toyota_Data, partition={},offset={}",partition,offset);
 			if(dao.getTelemetry()==null) {
 				logger.debug("Writing data for partition {}, offset {}", partition, offset);
