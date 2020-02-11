@@ -51,7 +51,7 @@ public class TestConsumerNMZDataToyotaNullDAO extends DAO
 		long currentTimeInMillis = System.currentTimeMillis();
 		NormalizedMsg dao = (NormalizedMsg)jsonParserUtil.getDataObject(record.value(), NormalizedMsg.class);
 		if(StringUtils.equalsIgnoreCase(dao.getSource(),toyotaSource)) {
-			logger.debug("Toyota Data");
+			logger.debug("Toyota_Data");
 			if(dao.getTelemetry()==null) {
 				int partition=record.partition();
 				long offset=record.offset();
