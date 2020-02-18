@@ -16,7 +16,7 @@ public class AmazonClient {
 
 	private AmazonS3 s3client;
 
-	@Value("${telemetry.aws.regionName}")
+	@Value("${telematics.aws.regionName}")
 	private String regionName;
 
 	@PostConstruct

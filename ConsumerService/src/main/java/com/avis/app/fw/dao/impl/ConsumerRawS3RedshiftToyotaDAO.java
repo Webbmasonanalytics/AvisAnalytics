@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.avis.app.fw.kafka.model.DataObject;
-import com.avis.app.raw.kafka.model.TelemetryRawMessage;
+import com.avis.app.raw.kafka.model.TelematicsRawMessage;
 import com.avis.app.redshift.model.RawTelemtryToyota;
 import com.avis.app.util.AwsS3Util;
 import com.avis.app.util.FileUtils;
@@ -35,36 +35,36 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 
 	
 	
-	@Value("${telemetry.toyota.raw.localfile.directory}")
+	@Value("${telematics.toyota.raw.localfile.directory}")
 	private String localDir;
 
 	
-	@Value("${telemetry.toyota.raw.aws.bucketName}")
+	@Value("${telematics.toyota.raw.aws.bucketName}")
 	private String bucketName;
 
-	@Value("${telemetry.toyota.raw.aws.fileName}")
+	@Value("${telematics.toyota.raw.aws.fileName}")
 	private String fileName;
 
-	@Value("${telemetry.toyota.raw.aws.directory.inbox}")
+	@Value("${telematics.toyota.raw.aws.directory.inbox}")
 	private String inboxDir;
 
-	@Value("${telemetry.toyota.raw.aws.directory.archive}")
+	@Value("${telematics.toyota.raw.aws.directory.archive}")
 	private String archiveDir;
 
-	@Value("${telemetry.toyota.raw.aws.directory.failed}")
+	@Value("${telematics.toyota.raw.aws.directory.failed}")
 	private String failedDir;
 
-	@Value("${telemetry.toyota.raw.aws.fileName.format}")
+	@Value("${telematics.toyota.raw.aws.fileName.format}")
 	private String format;
 	
-	@Value("${telemetry.toyota.raw.redshift.tableName}")
+	@Value("${telematics.toyota.raw.redshift.tableName}")
 	private String tableName;
 	
 	@Override
 	public boolean insertRecord(ConsumerRecord<String, String> record) throws Exception {
 
 		long startTime = System.currentTimeMillis();
-		List<DataObject> dos = jsonParserUtil.getListDataObject(record.value(), TelemetryRawMessage.class);
+		List<DataObject> dos = jsonParserUtil.getListDataObject(record.value(), TelematicsRawMessage.class);
 		final int partition = record.partition();
 		final long offset = record.offset();
 		final long timestamp = record.timestamp();
@@ -79,7 +79,7 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 			List<String> content = new ArrayList<String>();
 			for (DataObject kafkaMessage : dos) {
 
-				RawTelemtryToyota redshiftData = convertKafkaToRedshiftData((TelemetryRawMessage) kafkaMessage);
+				RawTelemtryToyota redshiftData = convertKafkaToRedshiftData((TelematicsRawMessage) kafkaMessage);
 				redshiftData.setPartition(partition);
 				redshiftData.setOffset(offset);
 				redshiftData.setTimestamp(timestamp);
@@ -111,97 +111,97 @@ public class ConsumerRawS3RedshiftToyotaDAO extends DAO {
 		return true;
 	}
 
-	public RawTelemtryToyota convertKafkaToRedshiftData(TelemetryRawMessage kafkaTelemtryRawMessage) {
+	public RawTelemtryToyota convertKafkaToRedshiftData(TelematicsRawMessage kafkaTelematicsRawMessage) {
 
 		RawTelemtryToyota redshiftData = new RawTelemtryToyota();
 
-		redshiftData.setCorrelationId(kafkaTelemtryRawMessage.getCorrelationId());
-		redshiftData.setLastTimestamp(kafkaTelemtryRawMessage.getLastTimestamp());
-		redshiftData.setVehicleName(kafkaTelemtryRawMessage.getVehicleName());
-		redshiftData.setVin(kafkaTelemtryRawMessage.getVin());
+		redshiftData.setCorrelationId(kafkaTelematicsRawMessage.getCorrelationId());
+		redshiftData.setLastTimestamp(kafkaTelematicsRawMessage.getLastTimestamp());
+		redshiftData.setVehicleName(kafkaTelematicsRawMessage.getVehicleName());
+		redshiftData.setVin(kafkaTelematicsRawMessage.getVin());
 
 		// set location data
-		if (kafkaTelemtryRawMessage.getLocation() != null) {
-			if (kafkaTelemtryRawMessage.getLocation().getCoordinates() != null
-					&& kafkaTelemtryRawMessage.getLocation().getCoordinates().size() != 0) {
-				redshiftData.setLocation_coordinates_0(kafkaTelemtryRawMessage.getLocation().getCoordinates().get(0));
-				redshiftData.setLocation_coordinates_1(kafkaTelemtryRawMessage.getLocation().getCoordinates().get(1));
+		if (kafkaTelematicsRawMessage.getLocation() != null) {
+			if (kafkaTelematicsRawMessage.getLocation().getCoordinates() != null
+					&& kafkaTelematicsRawMessage.getLocation().getCoordinates().size() != 0) {
+				redshiftData.setLocation_coordinates_0(kafkaTelematicsRawMessage.getLocation().getCoordinates().get(0));
+				redshiftData.setLocation_coordinates_1(kafkaTelematicsRawMessage.getLocation().getCoordinates().get(1));
 			}
 
-			redshiftData.setLocation_type(kafkaTelemtryRawMessage.getLocation().getType());
+			redshiftData.setLocation_type(kafkaTelematicsRawMessage.getLocation().getType());
 		}
 
 		// set Fuel Data
-		if (kafkaTelemtryRawMessage.getFuelLevel() != null) {
-			redshiftData.setFuelLevel_value(kafkaTelemtryRawMessage.getFuelLevel().getValue());
+		if (kafkaTelematicsRawMessage.getFuelLevel() != null) {
+			redshiftData.setFuelLevel_value(kafkaTelematicsRawMessage.getFuelLevel().getValue());
 		}
 
 		// set Telemetry Data
-		if (kafkaTelemtryRawMessage.getTelemetry() != null) {
+		if (kafkaTelematicsRawMessage.getTelemetry() != null) {
 			// set Driver Window data
-			if (kafkaTelemtryRawMessage.getTelemetry().getDriverWindow() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getDriverWindow() != null) {
 				redshiftData.setTelemetry_driverWindow_value(
-						kafkaTelemtryRawMessage.getTelemetry().getDriverWindow().getValue());
+						kafkaTelematicsRawMessage.getTelemetry().getDriverWindow().getValue());
 			}
 			// set EstimatedFuel Data
-			if (kafkaTelemtryRawMessage.getTelemetry().getEstimatedFuelLevel() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getEstimatedFuelLevel() != null) {
 				redshiftData.setTelemetry_estimatedFuelLevel_value(
-						kafkaTelemtryRawMessage.getTelemetry().getEstimatedFuelLevel().getValue());
+						kafkaTelematicsRawMessage.getTelemetry().getEstimatedFuelLevel().getValue());
 			}
 
 			// set FlTirePressure() data
-			if (kafkaTelemtryRawMessage.getTelemetry().getFlTirePressure() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getFlTirePressure() != null) {
 				redshiftData.setTelemetry_flTirePressure_unit(
-						kafkaTelemtryRawMessage.getTelemetry().getFlTirePressure().getUnit());
+						kafkaTelematicsRawMessage.getTelemetry().getFlTirePressure().getUnit());
 				redshiftData.setTelemetry_flTirePressure_value(
-						kafkaTelemtryRawMessage.getTelemetry().getFlTirePressure().getValue());
+						kafkaTelematicsRawMessage.getTelemetry().getFlTirePressure().getValue());
 			}
 
 			// set FrTirePressure
-			if (kafkaTelemtryRawMessage.getTelemetry().getFrTirePressure() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getFrTirePressure() != null) {
 				redshiftData.setTelemetry_frTirePressure_unit(
-						kafkaTelemtryRawMessage.getTelemetry().getFrTirePressure().getUnit());
+						kafkaTelematicsRawMessage.getTelemetry().getFrTirePressure().getUnit());
 				redshiftData.setTelemetry_frTirePressure_value(
-						kafkaTelemtryRawMessage.getTelemetry().getFrTirePressure().getValue());
+						kafkaTelematicsRawMessage.getTelemetry().getFrTirePressure().getValue());
 			}
 			// set Odometer
-			if (kafkaTelemtryRawMessage.getTelemetry().getOdometer() != null) {
-				redshiftData.setTelemetry_odometer_unit(kafkaTelemtryRawMessage.getTelemetry().getOdometer().getUnit());
+			if (kafkaTelematicsRawMessage.getTelemetry().getOdometer() != null) {
+				redshiftData.setTelemetry_odometer_unit(kafkaTelematicsRawMessage.getTelemetry().getOdometer().getUnit());
 				redshiftData
-						.setTelemetry_odometer_value(kafkaTelemtryRawMessage.getTelemetry().getOdometer().getValue());
+						.setTelemetry_odometer_value(kafkaTelematicsRawMessage.getTelemetry().getOdometer().getValue());
 			}
 			// set Passenger Window
-			if (kafkaTelemtryRawMessage.getTelemetry().getPassengerWindow() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getPassengerWindow() != null) {
 				redshiftData.setTelemetry_passengerWindow_value(
-						kafkaTelemtryRawMessage.getTelemetry().getPassengerWindow().getValue());
+						kafkaTelematicsRawMessage.getTelemetry().getPassengerWindow().getValue());
 			}
 			// set RlTirePressure
-			if (kafkaTelemtryRawMessage.getTelemetry().getRlTirePressure() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getRlTirePressure() != null) {
 				redshiftData.setTelemetry_rlTirePressure_unit(
-						kafkaTelemtryRawMessage.getTelemetry().getRlTirePressure().getUnit());
+						kafkaTelematicsRawMessage.getTelemetry().getRlTirePressure().getUnit());
 				redshiftData.setTelemetry_rlTirePressure_value(
-						kafkaTelemtryRawMessage.getTelemetry().getRlTirePressure().getValue());
+						kafkaTelematicsRawMessage.getTelemetry().getRlTirePressure().getValue());
 			}
 			// set RlWindow
-			if (kafkaTelemtryRawMessage.getTelemetry().getRlWindow() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getRlWindow() != null) {
 				redshiftData
-						.setTelemetry_rlWindow_value(kafkaTelemtryRawMessage.getTelemetry().getRlWindow().getValue());
+						.setTelemetry_rlWindow_value(kafkaTelematicsRawMessage.getTelemetry().getRlWindow().getValue());
 			}
 
 			// set RrWindow
-			if (kafkaTelemtryRawMessage.getTelemetry().getRrWindow() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getRrWindow() != null) {
 				redshiftData
-						.setTelemetry_rrWindow_value(kafkaTelemtryRawMessage.getTelemetry().getRrWindow().getValue());
+						.setTelemetry_rrWindow_value(kafkaTelematicsRawMessage.getTelemetry().getRrWindow().getValue());
 			}
 			// Set SparkTirePressure
-			if (kafkaTelemtryRawMessage.getTelemetry().getSpareTirePressure() != null) {
+			if (kafkaTelematicsRawMessage.getTelemetry().getSpareTirePressure() != null) {
 				redshiftData.setTelemetry_spareTirePressure_unit(
-						kafkaTelemtryRawMessage.getTelemetry().getSpareTirePressure().getUnit());
+						kafkaTelematicsRawMessage.getTelemetry().getSpareTirePressure().getUnit());
 				redshiftData.setTelemetry_spareTirePressure_value(
-						kafkaTelemtryRawMessage.getTelemetry().getSpareTirePressure().getValue());
+						kafkaTelematicsRawMessage.getTelemetry().getSpareTirePressure().getValue());
 			}
-			if (kafkaTelemtryRawMessage.getTelemetry().getSunRoof() != null) {
-				redshiftData.setTelemetry_sunRoof_value(kafkaTelemtryRawMessage.getTelemetry().getSunRoof().getValue());
+			if (kafkaTelematicsRawMessage.getTelemetry().getSunRoof() != null) {
+				redshiftData.setTelemetry_sunRoof_value(kafkaTelematicsRawMessage.getTelemetry().getSunRoof().getValue());
 			}
 		}
 

@@ -2,7 +2,7 @@ package com.avis.app.test;
 
 import java.util.Iterator;
 
-import com.avis.app.raw.kafka.model.TelemetryRawMessage;
+import com.avis.app.raw.kafka.model.TelematicsRawMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,7 +19,7 @@ public class TestJsonParser {
 		
 		Iterator<JsonNode> itr = node.iterator();
 		while(itr.hasNext()) {
-			TelemetryRawMessage obj = mapper.treeToValue(itr.next(), TelemetryRawMessage.class);
+			TelematicsRawMessage obj = mapper.treeToValue(itr.next(), TelematicsRawMessage.class);
 			System.out.println(obj);
 		}
 

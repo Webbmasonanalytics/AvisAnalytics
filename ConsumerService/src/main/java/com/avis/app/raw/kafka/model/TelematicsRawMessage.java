@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "vin"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TelemetryRawMessage implements DataObject{
+public class TelematicsRawMessage implements DataObject{
 
     @JsonProperty("correlationId")
     private String correlationId;

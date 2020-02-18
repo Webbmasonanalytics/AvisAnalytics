@@ -11,7 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.avis.app.fw.dao.ConsumerDAO;
-import com.avis.app.fw.dao.impl.ConsumerNMZS3RedhiftDAO;
+import com.avis.app.fw.dao.impl.ConsumerNMZKafkaToS3DAO;
 import com.avis.app.fw.dao.impl.ConsumerRawS3RedshiftToyotaDAO;
 import com.avis.app.fw.dao.impl.TestConsumerNMZDataToyotaNullDAO;
 import com.avis.app.fw.manage.ProcessConsumer;
@@ -21,20 +21,20 @@ public class ConsumerNavigator implements ProcessConsumer {
 
 	@Autowired
 	Environment env;
-	@Value("${telemetry.toyota.raw.topicName}")
-	private String telemetryRawToyotaTopicName;
+	@Value("${telematics.toyota.raw.topicName}")
+	private String telematicsRawToyotaTopicName;
 
-	@Value("${telemetry.nmz.topicName}")
-	private String telemetryNMZTopicName;
+	@Value("${telematics.nmz.topicName}")
+	private String telematicsNMZTopicName;
 
-	@Value("${telemetry.test.NMZ.toyota.nulls}")
-	private boolean testTelemetryNMZNulls;
+	@Value("${telematics.test.NMZ.toyota.nulls}")
+	private boolean testTelematicsNMZNulls;
 
 	@Autowired
 	ConsumerRawS3RedshiftToyotaDAO rawS3RedshiftToyotaDAO;
 
 	@Autowired
-	ConsumerNMZS3RedhiftDAO nmzS3RedhiftDAO;
+	ConsumerNMZKafkaToS3DAO nmzS3RedhiftDAO;
 
 	@Autowired
 	TestConsumerNMZDataToyotaNullDAO testConsumerNMZDataToyotaNullDAO;
@@ -60,10 +60,10 @@ public class ConsumerNavigator implements ProcessConsumer {
 	{
 
 		final String topicName = record.topic();
-		if (StringUtils.equalsIgnoreCase(topicName, telemetryRawToyotaTopicName)) {
+		if (StringUtils.equalsIgnoreCase(topicName, telematicsRawToyotaTopicName)) {
 			rawS3RedshiftToyotaDAO.insertRecord(record);
-		} else if (StringUtils.equalsIgnoreCase(topicName, telemetryNMZTopicName)) {
-			if (!testTelemetryNMZNulls) {
+		} else if (StringUtils.equalsIgnoreCase(topicName, telematicsNMZTopicName)) {
+			if (!testTelematicsNMZNulls) {
 				nmzS3RedhiftDAO.insertRecord(record);
 			} else {
 				testConsumerNMZDataToyotaNullDAO.insertRecord(record);
