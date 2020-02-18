@@ -12,5 +12,15 @@ public abstract class DAO implements ConsumerDAO {
 	public boolean insertRecord(ConsumerRecord<String, String> record) throws Exception {
 		return false;
 	}
+	
+	// topicName_timestamp_partition_offset
+	
+	@Override
+	public String getLocalFileName(ConsumerRecord<String, String> record) throws Exception {
+
+		String localFileName = record.topic()+"_"+record.timestamp()+"_"+record.partition()+"_"+record.offset();
+		
+		return localFileName;
+	}
 
 }

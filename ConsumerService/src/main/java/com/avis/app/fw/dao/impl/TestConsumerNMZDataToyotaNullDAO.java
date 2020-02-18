@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.avis.app.nmz.kafka.model.NormalizedMsg;
+import com.avis.app.nmz.kafka.model.TelemetryNormalizedMsg;
 import com.avis.app.util.AwsS3Util;
 import com.avis.app.util.FileUtils;
 import com.avis.app.util.JsonParserUtil;
@@ -49,7 +49,7 @@ public class TestConsumerNMZDataToyotaNullDAO extends DAO
 	{
 		logger.info("In TestConsumerNMZDataToyotaNullDAO");
 		long currentTimeInMillis = System.currentTimeMillis();
-		NormalizedMsg dao = (NormalizedMsg)jsonParserUtil.getDataObject(record.value(), NormalizedMsg.class);
+		TelemetryNormalizedMsg dao = (TelemetryNormalizedMsg)jsonParserUtil.getDataObject(record.value(), TelemetryNormalizedMsg.class);
 		int partition=record.partition();
 		long offset=record.offset();
 		logger.debug("Source = {},partition={},offset={}",dao.getSource(),partition,offset);

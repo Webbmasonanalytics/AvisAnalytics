@@ -2,11 +2,14 @@ package com.avis.app.redshift.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * 
  * @author Sainagaraju Vaduka
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RawTelemtryToyota implements Serializable {
 	
 	private static final long serialVersionUID = 90067605705809281L;
