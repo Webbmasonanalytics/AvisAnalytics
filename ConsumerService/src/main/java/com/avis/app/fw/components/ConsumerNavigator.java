@@ -30,6 +30,8 @@ public class ConsumerNavigator implements ProcessConsumer {
 	@Value("${telematics.test.NMZ.toyota.nulls}")
 	private boolean testTelematicsNMZNulls;
 
+	
+	
 	@Autowired
 	ConsumerRawS3RedshiftToyotaDAO rawS3RedshiftToyotaDAO;
 
@@ -68,6 +70,8 @@ public class ConsumerNavigator implements ProcessConsumer {
 			} else {
 				testConsumerNMZDataToyotaNullDAO.insertRecord(record);
 			}
+		}else if (StringUtils.equalsIgnoreCase(topicName, telematicsNMZTopicName)) {
+			
 		}
 		return false;
 	}
