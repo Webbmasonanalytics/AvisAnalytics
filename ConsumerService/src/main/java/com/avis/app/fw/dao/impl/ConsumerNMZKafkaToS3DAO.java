@@ -82,15 +82,14 @@ public class ConsumerNMZKafkaToS3DAO extends DAO {
 			logger.debug("Writing data for Source = {} , partition {}, offset {}", dataObject.getSource(), partition, offset);
 			String generatedFileName = getLocalFileName(record);
 			String localFile = localDir + File.separator + generatedFileName;
-			logger.debug("Writing to local file {}", localFile);
 			final String outputData = jsonParserUtil.getJsonString(dataObject);
 			fileUtils.writeDataToFile(outputData, localFile, false);
 			final long localWriteTimeEndMillis = System.currentTimeMillis();
-			logger.debug("Time Taken for Data Write to Local is {} in Millis",(localWriteTimeEndMillis-dataConvertionMillis));
+			logger.debug("Time Taken for Data Write to Local file{} is {} in Millis",localFile,(localWriteTimeEndMillis-dataConvertionMillis));
 			final String s3PutObjectKey = inboxDir + "/" + generatedFileName;
 			awsS3Util.uploadObject(telematicsBucketName, s3PutObjectKey, localFile);
 			final long s3WriteEndMillis = System.currentTimeMillis();
-			logger.debug("Time Taken for Data Write to S3 is {} in Millis",(s3WriteEndMillis-localWriteTimeEndMillis));
+			logger.debug("Time Taken for Data Write to S3 file {}, is {} in Millis",s3PutObjectKey,(s3WriteEndMillis-localWriteTimeEndMillis));
 			
 		} else {
 			logger.error("No data found for partition {}, offset {}", partition, offset);
