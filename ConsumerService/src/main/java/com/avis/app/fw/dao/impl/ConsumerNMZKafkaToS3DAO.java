@@ -47,7 +47,7 @@ public class ConsumerNMZKafkaToS3DAO extends DAO {
 	@Autowired
 	FileUtils fileUtils;
 
-	@Value("${file.name.seperator")
+	@Value("${file.name.seperator}")
 	private String fileNameSeperator;
 
 	@Autowired
