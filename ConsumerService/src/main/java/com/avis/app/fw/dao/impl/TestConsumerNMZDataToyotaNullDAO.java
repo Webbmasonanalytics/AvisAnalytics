@@ -26,19 +26,19 @@ public class TestConsumerNMZDataToyotaNullDAO extends DAO
 
 	@Autowired
 	AwsS3Util awsS3Util;
-	@Value("${telemetry.toyota.nmz.test.aws.directory.inbox}")
+	@Value("${telematics.toyota.nmz.test.aws.directory.inbox}")
 	private String inboxDir;
 	
-	@Value("${telemetry.toyota.nmz.test.aws.fileName}")
+	@Value("${telematics.toyota.nmz.test.aws.fileName}")
 	private String fileName;
 	
-	@Value("${telemetry.toyota.nmz.test.aws.bucketName}")
+	@Value("${telematics.toyota.nmz.test.aws.bucketName}")
 	private String testBucket;
 
-	@Value("${telemetry.toyota.nmz.test.localfile.directory}")
+	@Value("${telematics.toyota.nmz.test.localfile.directory}")
 	private String localDir;
 	
-	@Value("${telemetry.toyota.nmz.test.aws.fileName.format}")
+	@Value("${telematics.toyota.nmz.test.aws.fileName.format}")
 	private String format;
 	
 	@Value("${source.toyota}")
