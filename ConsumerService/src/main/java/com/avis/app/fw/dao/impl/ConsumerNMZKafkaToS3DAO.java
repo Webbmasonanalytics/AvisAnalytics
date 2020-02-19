@@ -73,7 +73,7 @@ public class ConsumerNMZKafkaToS3DAO extends DAO {
 		long currentTimeInMillis = System.currentTimeMillis();
 		NormalizeTelematics dataObject = (NormalizeTelematics)getStorageDataObject(record);
 		long dataConvertionMillis= System.currentTimeMillis();
-		logger.debug("Time Take for Data Conversion {} in Millis",(dataConvertionMillis-currentTimeInMillis));
+		logger.debug("Time Taken for Data Conversion {} in Millis",(dataConvertionMillis-currentTimeInMillis));
 		int partition = record.partition();
 		long offset = record.offset();
 
@@ -86,11 +86,11 @@ public class ConsumerNMZKafkaToS3DAO extends DAO {
 			final String outputData = jsonParserUtil.getJsonString(dataObject);
 			fileUtils.writeDataToFile(outputData, localFile, false);
 			final long localWriteTimeEndMillis = System.currentTimeMillis();
-			logger.debug("Time Take for Data Write to Local is {} in Millis",(localWriteTimeEndMillis-dataConvertionMillis));
+			logger.debug("Time Taken for Data Write to Local is {} in Millis",(localWriteTimeEndMillis-dataConvertionMillis));
 			final String s3PutObjectKey = inboxDir + "/" + generatedFileName;
 			awsS3Util.uploadObject(telematicsBucketName, s3PutObjectKey, localFile);
 			final long s3WriteEndMillis = System.currentTimeMillis();
-			logger.debug("Time Take for Data Write to S3 is {} in Millis",(s3WriteEndMillis-localWriteTimeEndMillis));
+			logger.debug("Time Taken for Data Write to S3 is {} in Millis",(s3WriteEndMillis-localWriteTimeEndMillis));
 			
 		} else {
 			logger.error("No data found for partition {}, offset {}", partition, offset);
