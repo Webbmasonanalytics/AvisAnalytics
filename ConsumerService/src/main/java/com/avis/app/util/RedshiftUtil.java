@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 public class RedshiftUtil 
 {
 
-	@Value("${telemetry.toyota.raw.accessKey}")
+	@Value("${telematics.toyota.raw.accessKey}")
 	private String accessKey;
 	
-	@Value("${telemetry.toyota.raw.secretKey}")
+	@Value("${telematics.toyota.raw.secretKey}")
 	private String secretKey;
 	
 //	@Autowired
